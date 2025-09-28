@@ -1,7 +1,20 @@
 import Link from 'next/link';
 import { memo } from 'react';
+import api from '../../utils/api';
 
 const ContactItem = memo(({ contact, onRemove }) => {
+    const handleRemove = async () => {
+        try {
+            // Tentar remover via API primeiro
+            await api.delete(`/contacts/${contact.id}`);
+            onRemove(contact.id);
+        } catch (err) {
+            // Se API falhar, remover apenas localmente
+            console.log('API offline, removendo localmente');
+            onRemove(contact.id);
+        }
+    };
+
     return (
         <li className="p-4 flex items-center justify-between">
             <div>
@@ -16,7 +29,7 @@ const ContactItem = memo(({ contact, onRemove }) => {
                 </p>
             </div>
             <button
-                onClick={() => onRemove(contact.id)}
+                onClick={handleRemove}
                 className="text-red-600 hover:text-red-700 px-2 py-1 rounded"
             >
                 Excluir

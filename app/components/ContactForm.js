@@ -1,24 +1,50 @@
 import { useEffect, useRef, useState } from "react";
+import api from '../../utils/api';
 
 const ContactForm = ({ onAdd }) => {
     const [form, setForm] = useState({ nome: "", email: "", telefone: "" });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const nomeInputRef = useRef(null);
 
+    // MANTER: Foco automático do projeto existente
     useEffect(() => {
         nomeInputRef.current?.focus();
     }, []);
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!form.nome.trim()) return; // Validação simples
-        onAdd({ ...form, id: Date.now() });
-        setForm({ nome: "", email: "", telefone: "" });
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            // Tentar salvar via API primeiro
+            try {
+                const response = await api.post('/contacts', form);
+                // Se API funcionar, usar o ID retornado
+                onAdd({ ...form, id: response.data.id });
+            } catch (apiError) {
+                // Se API falhar, salvar localmente
+                console.log('API offline, salvando localmente');
+                onAdd({ ...form, id: Date.now() });
+            }
+
+            setForm({ nome: "", email: "", telefone: "" });
+            // Focar novamente no campo nome após adicionar
+            nomeInputRef.current?.focus();
+
+        } catch (err) {
+            setError('Erro ao adicionar contato');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -56,8 +82,16 @@ const ContactForm = ({ onAdd }) => {
                 />
             </div>
 
-            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-                Adicionar Contato
+            {error && (
+                <div className="text-red-600 text-sm">{error}</div>
+            )}
+
+            <button
+                type="submit"
+                disabled={loading}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50"
+            >
+                {loading ? 'Salvando...' : 'Adicionar Contato'}
             </button>
         </form>
     );
