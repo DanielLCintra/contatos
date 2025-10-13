@@ -11,7 +11,7 @@ const ContactList = ({ items, onRemove }) => {
                     <li className="p-4 text-gray-500">Nenhum contato encontrado</li>
                 ) : (
                     items.map((c) => (
-                        <ContactItem key={c.id} contact={c} onRemove={onRemove} />
+                        <ContactItem key={c.id} contact={c} />
                     ))
                 )}
             </ul>

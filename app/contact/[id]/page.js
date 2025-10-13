@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
-import api from '../../utils/api'; // utils/api.js (existente)
+import api from '../../utils/api';
 
 const ContactDetailPage = () => {
     const params = useParams();

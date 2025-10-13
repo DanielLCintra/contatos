@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import { memo } from 'react';
+import { useForm } from '../hooks/useForm';
 
-const ContactItem = memo(({ contact, onRemove }) => {
+const ContactItem = memo(({ contact }) => {
+    const { handleRemove } = useForm();
+
     return (
         <li className="p-4 flex items-center justify-between">
             <div>
@@ -16,7 +19,7 @@ const ContactItem = memo(({ contact, onRemove }) => {
                 </p>
             </div>
             <button
-                onClick={() => onRemove(contact.id)}
+                onClick={() => handleRemove(contact.id)}
                 className="text-red-600 hover:text-red-700 px-2 py-1 rounded cursor-pointer"
             >
                 Excluir
