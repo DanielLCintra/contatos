@@ -171,9 +171,29 @@ const HomePage = () => {
   }, []);
 
 
-  const handleRemove = useCallback((id) => {
-    setContacts(prev => prev.filter(c => c.id !== id));
+  const handleRemove = useCallback(async (id) => {
+    try {
+      // Tentar excluir via API primeiro
+      try {
+        await api.delete(`/contacts/${id}`);
+        console.log('Contato excluído da API');
+      } catch (apiError) {
+        // Se API falhar, apenas remover localmente
+        console.log('API offline, removendo apenas localmente');
+      }
+
+      // Remover da lista local em ambos os casos
+      setContacts(prev => {
+        const updated = prev.filter(c => c.id !== id);
+        // Atualizar cache
+        cacheService.set(updated);
+        return updated;
+      });
+    } catch (err) {
+      console.error('Erro ao remover contato:', err);
+    }
   }, []);
+
 
   const handleFilterChange = useCallback((value) => {
     setFilter(value);

@@ -17,7 +17,7 @@ const ContactItem = memo(({ contact, onRemove }) => {
             </div>
             <button
                 onClick={() => onRemove(contact.id)}
-                className="text-red-600 hover:text-red-700 px-2 py-1 rounded"
+                className="text-red-600 hover:text-red-700 px-2 py-1 rounded cursor-pointer"
             >
                 Excluir
             </button>
