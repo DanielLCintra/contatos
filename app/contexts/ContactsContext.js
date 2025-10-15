@@ -124,6 +124,31 @@ export const ContactsProvider = ({ children }) => {
         }
     }, []);
 
+    // ✅ NOVO: Buscar contato específico por ID
+    const getContact = useCallback(async (id) => {
+        try {
+            // Primeiro, tentar buscar da API
+            try {
+                const response = await api.get(`/contacts/${id}`);
+                return response.data;
+            } catch (apiError) {
+                // Se API falhar, buscar do cache local
+                console.log('API offline, buscando do cache local');
+                const cachedContacts = cacheService.get();
+                if (cachedContacts) {
+                    const foundContact = cachedContacts.find(c => c.id === parseInt(id));
+                    if (foundContact) {
+                        return foundContact;
+                    }
+                }
+                throw new Error('Contato não encontrado');
+            }
+        } catch (err) {
+            console.error('Erro ao buscar contato:', err);
+            throw err;
+        }
+    }, []);
+
     // ✅ MANTER: Sincronização online/offline
     useEffect(() => {
         const syncPendingContacts = async () => {
@@ -212,7 +237,8 @@ export const ContactsProvider = ({ children }) => {
         isOffline,
         addContact,
         removeContact,
-        loadContacts
+        loadContacts,
+        getContact
     };
 
     return (

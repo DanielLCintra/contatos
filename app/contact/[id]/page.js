@@ -1,50 +1,11 @@
 "use client";
 
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from "react";
-import api from '../../utils/api';
+import { useRouter } from 'next/navigation';
+import { useContactDetail } from '../../hooks/useContactDetail';
 
 const ContactDetailPage = () => {
-    const params = useParams();
     const router = useRouter();
-    const [contact, setContact] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const fetchContact = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-
-                try {
-                    const response = await api.get(`/contacts/${params.id}`);
-                    setContact(response.data);
-                } catch (apiError) {
-                    console.log('API offline, buscando do cache local');
-                    const cachedContacts = localStorage.getItem('contatos');
-                    if (cachedContacts) {
-                        const contacts = JSON.parse(cachedContacts);
-                        const foundContact = contacts.find(c => c.id === parseInt(params.id));
-                        if (foundContact) {
-                            setContact(foundContact);
-                        } else {
-                            setError('Contato não encontrado');
-                        }
-                    } else {
-                        setError('Contato não encontrado e sem cache disponível');
-                    }
-                }
-            } catch (err) {
-                console.error('Erro ao buscar contato:', err);
-                setError('Erro ao carregar contato');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchContact();
-    }, [params.id]);
+    const { contact, loading, error } = useContactDetail();
 
     if (loading) {
         return (
