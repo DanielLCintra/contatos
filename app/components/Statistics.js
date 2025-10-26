@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Statistcs = ({ stats }) => {
+const Statistics = ({ stats }) => {
     return (
         <div className="bg-white shadow rounded p-4">
             <h3 className="text-lg font-semibold mb-3">Estatísticas</h3>
@@ -30,4 +30,4 @@ const Statistcs = ({ stats }) => {
     )
 }
 
-export default Statistcs
+export default Statistics
